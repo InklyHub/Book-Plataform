@@ -23,8 +23,6 @@ async def get_me(current_user: CurrentUser, db: DB):
         )
     )
     user = result.scalar_one()
-    # Serializar géneros como lista de strings
-    user.preferred_genres = [g.genre for g in user.preferred_genres]  # type: ignore[assignment]
     return user
 
 

@@ -70,6 +70,7 @@ Documentación interactiva en `http://localhost:8000/docs`
 ```bash
 cd frontend
 npm install
+npm install -D tailwindcss@3 autoprefixer
 npm start
 ```
 

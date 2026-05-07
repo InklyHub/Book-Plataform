@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -98,5 +99,10 @@ async def save_preferred_genres(body: OnboardingGenres, current_user: CurrentUse
     for genre in body.genres:
         db.add(UserPreferredGenre(user_id=current_user.id, genre=genre))
 
-    await db.refresh(current_user)
-    return current_user
+    await db.flush()
+    result = await db.execute(
+        select(User)
+        .options(selectinload(User.preferred_genres), selectinload(User.reading_stats))
+        .where(User.id == current_user.id)
+    )
+    return result.scalar_one()

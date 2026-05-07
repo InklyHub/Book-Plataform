@@ -1,7 +1,8 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
+from typing import Any
 
 
 VALID_ROLES = {"reader", "writer"}
@@ -67,6 +68,13 @@ class UserOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+    @field_validator("preferred_genres", mode="before")
+    @classmethod
+    def extract_genres(cls, v: Any) -> list[str]:
+        if isinstance(v, list) and v and hasattr(v[0], "genre"):
+            return [item.genre for item in v]
+        return v or []
 
 
 class UserPublicOut(BaseModel):
