@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator
@@ -93,6 +94,13 @@ class BookOut(BaseModel):
 
     model_config = {"from_attributes": True}
 
+    @field_validator("tags", mode="before")
+    @classmethod
+    def extract_tags(cls, v: Any) -> list[str]:
+        if isinstance(v, list) and v and hasattr(v[0], "tag"):
+            return [item.tag for item in v]
+        return v or []
+
 
 class BookListOut(BaseModel):
     id: UUID
@@ -108,6 +116,13 @@ class BookListOut(BaseModel):
     tags: list[str] = []
 
     model_config = {"from_attributes": True}
+
+    @field_validator("tags", mode="before")
+    @classmethod
+    def extract_tags(cls, v: Any) -> list[str]:
+        if isinstance(v, list) and v and hasattr(v[0], "tag"):
+            return [item.tag for item in v]
+        return v or []
 
 
 class BookRateIn(BaseModel):
