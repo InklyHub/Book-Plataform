@@ -85,7 +85,10 @@ export class LoginComponent {
     const { email, password } = this.form.value;
     this.auth.login(email!, password!).subscribe({
       next: () => {
-        this.auth.loadProfile().subscribe(() => this.router.navigate(['/home']));
+        this.auth.loadProfile().subscribe({
+          next: () => this.router.navigate(['/home']),
+          error: () => this.router.navigate(['/home']),
+        });
       },
       error: (err) => {
         this.error.set(err.message || 'Credenciales inválidas');
