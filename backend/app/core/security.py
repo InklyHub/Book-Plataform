@@ -37,13 +37,6 @@ def create_refresh_token(user_id: str) -> str:
     )
 
 
-def create_password_reset_token(user_id: str) -> str:
-    return _create_token(
-        {"sub": user_id, "type": "password_reset"},
-        timedelta(minutes=15),
-    )
-
-
 def decode_token(token: str) -> dict[str, Any]:
     try:
         return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])

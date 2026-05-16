@@ -26,9 +26,5 @@ class Settings(BaseSettings):
 
     PLATFORM_CUT_PERCENT: int = 30  # porcentaje que se queda la plataforma
 
-    RESEND_API_KEY: str = ""
-    RESEND_FROM_EMAIL: str = "noreply@bookplatform.com"
-    FRONTEND_URL: str = "http://localhost:4200"
-
 
 settings = Settings()

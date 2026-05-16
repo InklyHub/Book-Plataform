@@ -30,29 +30,32 @@ async def list_books(
     page: int = Query(default=1, ge=1),
     size: int = Query(default=20, ge=1, le=100),
 ):
-    filters = [Book.status == status]
-    if category:
-        filters.append(Book.category == category)
-    if genre:
-        filters.append(Book.genre == genre)
-    if q:
-        filters.append(Book.title.ilike(f"%{q}%"))
-
-    total_result = await db.execute(select(func.count(Book.id)).where(*filters))
-    total = total_result.scalar_one()
-
     query = (
         select(Book)
-        .where(*filters)
+        .where(Book.status == status)
         .options(selectinload(Book.author), selectinload(Book.tags))
     )
+    if category:
+        query = query.where(Book.category == category)
+    if genre:
+        query = query.where(Book.genre == genre)
+    if q:
+        query = query.where(Book.title.ilike(f"%{q}%"))
+
+    total_result = await db.execute(select(func.count()).select_from(query.subquery()))
+    total = total_result.scalar_one()
 
     books_result = await db.execute(
         query.order_by(Book.views_count.desc()).offset((page - 1) * size).limit(size)
     )
     books = books_result.scalars().all()
 
-    items = [BookListOut.model_validate(book) for book in books]
+    items = []
+    for book in books:
+        tags = [t.tag for t in book.tags]
+        book_dict = BookListOut.model_validate(book)
+        book_dict.tags = tags
+        items.append(book_dict)
 
     return PaginatedBooks(
         items=items,

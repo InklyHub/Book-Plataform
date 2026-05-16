@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
-import { TokenResponse, User } from '../models';
+import { TokenResponse, User, UserRole, ROLE_WRITER, ROLE_BOTH, ROLE_READER, isWriter } from '../models';
 
 const ACCESS_KEY = 'bp_access';
 const REFRESH_KEY = 'bp_refresh';
@@ -17,14 +17,24 @@ export class AuthService {
 
   readonly user = this._user.asReadonly();
   readonly isLoggedIn = computed(() => !!this._user());
-  readonly isWriter = computed(() => this._user()?.role === 'writer');
+  // escritor si role es 1 (escritor) o 2 (ambos)
+  readonly isWriter = computed(() => {
+    const role = this._user()?.role;
+    return role === ROLE_WRITER || role === ROLE_BOTH;
+  });
+  // lector si role es 0 (lector) o 2 (ambos)
+  readonly isReader = computed(() => {
+    const role = this._user()?.role;
+    return role === ROLE_READER || role === ROLE_BOTH;
+  });
+  readonly isBoth = computed(() => this._user()?.role === ROLE_BOTH);
   readonly coins = computed(() => this._user()?.coins ?? 0);
 
   get accessToken(): string | null {
     return localStorage.getItem(ACCESS_KEY);
   }
 
-  register(email: string, username: string, password: string, role = 'reader'): Observable<TokenResponse> {
+  register(email: string, username: string, password: string, role: number = ROLE_READER): Observable<TokenResponse> {
     return this.api.post<TokenResponse>('/auth/register', { email, username, password, role }).pipe(
       tap(res => this.saveTokens(res))
     );
@@ -61,13 +71,27 @@ export class AuthService {
     );
   }
 
-  switchToWriter(): Observable<{ access_token: string; refresh_token: string; role: string }> {
+  /** Activa el rol que le falta al usuario (lector→ambos, escritor→ambos) */
+  switchRole(): Observable<{ access_token: string; refresh_token: string; role: number }> {
     return this.api.post<any>('/writer/switch-role').pipe(
       tap(res => {
         if (res.access_token) {
           localStorage.setItem(ACCESS_KEY, res.access_token);
           localStorage.setItem(REFRESH_KEY, res.refresh_token);
-          this._user.update(u => u ? { ...u, role: 'writer' } : u);
+          this._user.update(u => u ? { ...u, role: res.role as UserRole } : u);
+        }
+      })
+    );
+  }
+
+  /** Desactiva un rol parcial (solo si el usuario tiene ambos): target = 'reader' | 'writer' */
+  deactivateRole(target: 'reader' | 'writer'): Observable<{ access_token: string; refresh_token: string; role: number }> {
+    return this.api.post<any>(`/writer/deactivate-role?target_role=${target}`).pipe(
+      tap(res => {
+        if (res.access_token) {
+          localStorage.setItem(ACCESS_KEY, res.access_token);
+          localStorage.setItem(REFRESH_KEY, res.refresh_token);
+          this._user.update(u => u ? { ...u, role: res.role as UserRole } : u);
         }
       })
     );
@@ -78,14 +102,6 @@ export class AuthService {
     localStorage.removeItem(REFRESH_KEY);
     this._user.set(null);
     this.router.navigate(['/login']);
-  }
-
-  forgotPassword(email: string): Observable<{ message: string; reset_token?: string }> {
-    return this.api.post<{ message: string; reset_token?: string }>('/auth/forgot-password', { email });
-  }
-
-  resetPassword(token: string, newPassword: string): Observable<{ message: string }> {
-    return this.api.post<{ message: string }>('/auth/reset-password', { token, new_password: newPassword });
   }
 
   updateCoins(delta: number): void {

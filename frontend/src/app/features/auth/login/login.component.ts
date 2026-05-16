@@ -36,13 +36,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
             </div>
 
             <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label class="block text-sm font-medium text-gray-700">Contraseña</label>
-                <a routerLink="/forgot-password"
-                  class="text-xs text-purple-600 hover:text-purple-800 hover:underline transition-colors">
-                  ¿Olvidaste tu contraseña?
-                </a>
-              </div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Contraseña</label>
               <input formControlName="password" type="password" class="input-field"
                 placeholder="••••••••" autocomplete="current-password" />
               @if (form.get('password')?.invalid && form.get('password')?.touched) {
@@ -91,10 +85,7 @@ export class LoginComponent {
     const { email, password } = this.form.value;
     this.auth.login(email!, password!).subscribe({
       next: () => {
-        this.auth.loadProfile().subscribe({
-          next: () => this.router.navigate(['/home']),
-          error: () => this.router.navigate(['/home']),
-        });
+        this.auth.loadProfile().subscribe(() => this.router.navigate(['/home']));
       },
       error: (err) => {
         this.error.set(err.message || 'Credenciales inválidas');

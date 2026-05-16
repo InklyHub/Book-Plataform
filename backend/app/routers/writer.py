@@ -83,18 +83,60 @@ async def get_book_analytics(book_id: UUID, current_user: CurrentWriter, db: DB)
 
 
 @router.post("/switch-role")
-async def switch_to_writer(current_user: CurrentUser, db: DB):
-    """Permite a un lector activar el modo escritor."""
-    if current_user.role == "writer":
-        return {"message": "Ya eres escritor", "role": current_user.role}
-
-    current_user.role = "writer"
-    await db.flush()
-
+async def switch_role(current_user: CurrentUser, db: DB):
+    """
+    Activa el modo escritor para un lector (0→2) o el modo lector para un escritor (1→2).
+    """
+    from app.schemas.user import ROLE_READER, ROLE_WRITER, ROLE_BOTH
     from app.core.security import create_access_token, create_refresh_token
+
+    if current_user.role == ROLE_READER:
+        current_user.role = ROLE_BOTH
+        msg = "Modo escritor activado. Ahora eres lector y escritor."
+    elif current_user.role == ROLE_WRITER:
+        current_user.role = ROLE_BOTH
+        msg = "Modo lector activado. Ahora eres escritor y lector."
+    else:
+        return {"message": "Ya tienes ambos roles activos", "role": current_user.role}
+
+    await db.flush()
     return {
-        "message": "Modo escritor activado",
-        "role": "writer",
-        "access_token": create_access_token(str(current_user.id), "writer"),
+        "message": msg,
+        "role": current_user.role,
+        "access_token": create_access_token(str(current_user.id), str(current_user.role)),
+        "refresh_token": create_refresh_token(str(current_user.id)),
+    }
+
+
+@router.post("/deactivate-role")
+async def deactivate_role(current_user: CurrentUser, db: DB, target_role: str):
+    """
+    Cierra una cuenta parcial:
+    - target_role='reader': si el usuario es ambos (2), pasa a escritor (1)
+    - target_role='writer': si el usuario es ambos (2), pasa a lector (0)
+    """
+    from app.schemas.user import ROLE_READER, ROLE_WRITER, ROLE_BOTH
+    from app.core.security import create_access_token, create_refresh_token
+
+    if current_user.role != ROLE_BOTH:
+        raise HTTPException(
+            status_code=400,
+            detail="Solo puedes desactivar un rol si tienes ambos activos"
+        )
+
+    if target_role == "reader":
+        current_user.role = ROLE_WRITER
+        msg = "Cuenta de lector desactivada. Ahora solo eres escritor."
+    elif target_role == "writer":
+        current_user.role = ROLE_READER
+        msg = "Cuenta de escritor desactivada. Ahora solo eres lector."
+    else:
+        raise HTTPException(status_code=400, detail="target_role debe ser 'reader' o 'writer'")
+
+    await db.flush()
+    return {
+        "message": msg,
+        "role": current_user.role,
+        "access_token": create_access_token(str(current_user.id), str(current_user.role)),
         "refresh_token": create_refresh_token(str(current_user.id)),
     }
