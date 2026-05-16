@@ -50,6 +50,7 @@ class BookCreate(BaseModel):
 class BookUpdate(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=300)
     description: str | None = None
+    cover_url: str | None = None
     genre: str | None = None
     category: str | None = None
     age_restriction: str | None = None
