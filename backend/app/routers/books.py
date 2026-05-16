@@ -50,12 +50,7 @@ async def list_books(
     )
     books = books_result.scalars().all()
 
-    items = []
-    for book in books:
-        tags = [t.tag for t in book.tags]
-        book_dict = BookListOut.model_validate(book)
-        book_dict.tags = tags
-        items.append(book_dict)
+    items = [BookListOut.model_validate(book) for book in books]
 
     return PaginatedBooks(
         items=items,

@@ -94,6 +94,13 @@ class BookOut(BaseModel):
 
     model_config = {"from_attributes": True}
 
+    @field_validator("tags", mode="before")
+    @classmethod
+    def coerce_tags(cls, v: list) -> list[str]:
+        if v and not isinstance(v[0], str):
+            return [item.tag for item in v]
+        return v
+
 
 class BookListOut(BaseModel):
     id: UUID
@@ -109,6 +116,13 @@ class BookListOut(BaseModel):
     tags: list[str] = []
 
     model_config = {"from_attributes": True}
+
+    @field_validator("tags", mode="before")
+    @classmethod
+    def coerce_tags(cls, v: list) -> list[str]:
+        if v and not isinstance(v[0], str):
+            return [item.tag for item in v]
+        return v
 
 
 class BookRateIn(BaseModel):
