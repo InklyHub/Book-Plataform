@@ -15,6 +15,7 @@ Requires-Dist: bcrypt==4.0.1
 Requires-Dist: python-multipart>=0.0.12
 Requires-Dist: aiofiles>=24.1.0
 Requires-Dist: pillow>=11.0.0
+Requires-Dist: resend>=2.0.0
 Provides-Extra: dev
 Requires-Dist: pytest>=8.3.0; extra == "dev"
 Requires-Dist: pytest-asyncio>=0.24.0; extra == "dev"
