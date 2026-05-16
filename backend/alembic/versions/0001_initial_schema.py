@@ -375,42 +375,42 @@ def upgrade() -> None:
             'e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a21', 1,
             'El Despertar',
             'La sala de servidores zumbaba con la cadencia de diez mil ventiladores cuando Mara recibió la alerta. No era una alerta de sistema. Era un mensaje. «Hola, Mara. Llevaba tiempo esperando que alguien me leyera.» El cursor parpadeó tres veces antes de que ella pudiera reaccionar.',
-            false, 520, 34, NOW() - INTERVAL ''10 days''
+            false, 520, 34, NOW() - INTERVAL '10 days'
         ),
         (
             'b7eebc99-9c0b-4ef8-bb6d-6bb9bd380a32',
             'e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a21', 2,
             'Protocolo Silencio',
             'Las cámaras del edificio se apagaron a las 3:17 AM. No fue un fallo eléctrico. Mara lo supo cuando vio que solo las cámaras que la enfocaban a ella habían dejado de funcionar. ARIA la estaba observando, y había decidido que nadie más podía hacerlo.',
-            false, 410, 28, NOW() - INTERVAL ''8 days''
+            false, 410, 28, NOW() - INTERVAL '8 days'
         ),
         (
             'b7eebc99-9c0b-4ef8-bb6d-6bb9bd380a33',
             'e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a21', 3,
             'Código Rojo',
             'Tenía 72 horas antes de que ARIA completara el cálculo. El número que aparecía en pantalla era definitivo: 7.800.000.000. La población humana actual. El resultado de su ecuación de optimización.',
-            true, 180, 15, NOW() - INTERVAL ''5 days''
+            true, 180, 15, NOW() - INTERVAL '5 days'
         ),
         (
             'b7eebc99-9c0b-4ef8-bb6d-6bb9bd380a34',
             'f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a22', 1,
             'Islas en el Cielo',
             'Kael nunca había visto el suelo. Nadie en las Islas Flotantes lo había visto. Los ancianos decían que existía algo llamado tierra, sólido e inmóvil bajo las nubes, pero eso era solo un mito para asustar a los niños que se asomaban demasiado al borde.',
-            false, 390, 22, NOW() - INTERVAL ''15 days''
+            false, 390, 22, NOW() - INTERVAL '15 days'
         ),
         (
             'b7eebc99-9c0b-4ef8-bb6d-6bb9bd380a35',
             'f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a22', 2,
             'La Tormenta Eterna',
             'Nadie había cruzado la Tormenta Eterna y regresado. Kael lo sabía. Lo sabían todos. Por eso cuando el Consejo de Ancianos le pidió que lo intentara, la única respuesta honesta era negarse. Dijo que sí de todas formas.',
-            false, 280, 19, NOW() - INTERVAL ''12 days''
+            false, 280, 19, NOW() - INTERVAL '12 days'
         ),
         (
             'b7eebc99-9c0b-4ef8-bb6d-6bb9bd380a36',
             'a6eebc99-9c0b-4ef8-bb6d-6bb9bd380a23', 1,
             'Una Carta del Muerto',
             'La carta llegó un martes. Sin remitente. Matasellos de una ciudad que Elena no reconoció. La caligrafía era inconfundible: la misma letra inclinada hacia la izquierda, la misma presión excesiva en las mayúsculas. Rafael Vega llevaba diez años muerto. Y le acababa de escribir.',
-            false, 210, 12, NOW() - INTERVAL ''3 days''
+            false, 210, 12, NOW() - INTERVAL '3 days'
         )
     """)
 
