@@ -36,7 +36,13 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Contraseña</label>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="block text-sm font-medium text-gray-700">Contraseña</label>
+                <a routerLink="/forgot-password"
+                  class="text-xs text-purple-600 hover:text-purple-800 hover:underline transition-colors">
+                  ¿Olvidaste tu contraseña?
+                </a>
+              </div>
               <input formControlName="password" type="password" class="input-field"
                 placeholder="••••••••" autocomplete="current-password" />
               @if (form.get('password')?.invalid && form.get('password')?.touched) {

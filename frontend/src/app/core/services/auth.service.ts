@@ -80,6 +80,14 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+  forgotPassword(email: string): Observable<{ message: string; reset_token?: string }> {
+    return this.api.post<{ message: string; reset_token?: string }>('/auth/forgot-password', { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<{ message: string }> {
+    return this.api.post<{ message: string }>('/auth/reset-password', { token, new_password: newPassword });
+  }
+
   updateCoins(delta: number): void {
     this._user.update(u => u ? { ...u, coins: u.coins + delta } : u);
   }
