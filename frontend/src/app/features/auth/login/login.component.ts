@@ -24,7 +24,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
         </div>
 
         <!-- Card -->
-        <div class="card p-8">
+        <div class="card p-5 sm:p-8">
           <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>

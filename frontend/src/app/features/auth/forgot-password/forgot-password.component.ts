@@ -24,7 +24,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
           <p class="text-gray-500 mt-1">Te enviaremos un enlace de recuperación</p>
         </div>
 
-        <div class="card p-8">
+        <div class="card p-5 sm:p-8">
 
           <!-- Estado: éxito -->
           @if (sent()) {

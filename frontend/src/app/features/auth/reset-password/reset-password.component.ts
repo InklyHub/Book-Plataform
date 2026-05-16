@@ -30,7 +30,7 @@ const passwordsMatch = (group: AbstractControl): ValidationErrors | null => {
           <p class="text-gray-500 mt-1">Elige una contraseña segura</p>
         </div>
 
-        <div class="card p-8">
+        <div class="card p-5 sm:p-8">
 
           <!-- Token inválido -->
           @if (tokenMissing()) {

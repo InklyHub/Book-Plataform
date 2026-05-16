@@ -8,7 +8,7 @@ import { CoinBadgeComponent } from '../coin-badge/coin-badge.component';
   standalone: true,
   imports: [RouterLink, RouterLinkActive, CoinBadgeComponent],
   template: `
-    <aside class="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-100 flex flex-col z-30 shadow-sm">
+    <aside class="hidden md:flex fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-100 flex-col z-30 shadow-sm">
       <!-- Logo -->
       <div class="p-6 border-b border-gray-100">
         <a routerLink="/home" class="flex items-center gap-3">

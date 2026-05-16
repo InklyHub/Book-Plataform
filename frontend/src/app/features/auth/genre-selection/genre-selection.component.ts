@@ -28,7 +28,7 @@ const GENRES = [
           <p class="text-gray-500 mt-2">Elige al menos 1 género para personalizar tu experiencia</p>
         </div>
 
-        <div class="card p-6">
+        <div class="card p-4 sm:p-6">
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-6">
             @for (genre of genres; track genre.value) {
               <button type="button"

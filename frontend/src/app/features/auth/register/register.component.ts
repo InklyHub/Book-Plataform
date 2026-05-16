@@ -23,7 +23,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
           <p class="text-gray-500 mt-1">Únete a miles de lectores y escritores</p>
         </div>
 
-        <div class="card p-8">
+        <div class="card p-5 sm:p-8">
           <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1.5">Nombre de usuario</label>

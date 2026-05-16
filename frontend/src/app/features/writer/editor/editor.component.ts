@@ -21,9 +21,9 @@ const CATEGORIES = [
   standalone: true,
   imports: [ReactiveFormsModule, FormsModule, SpinnerComponent],
   template: `
-    <div class="p-6 max-w-5xl">
+    <div class="p-3 sm:p-6 max-w-5xl mx-auto">
       <!-- Tabs -->
-      <div class="flex gap-4 mb-6 border-b border-gray-200">
+      <div class="flex gap-2 sm:gap-4 mb-6 border-b border-gray-200 overflow-x-auto no-scrollbar">
         <button [class]="tabClass('book')" (click)="activeTab.set('book')">📋 Info del libro</button>
         <button [class]="tabClass('chapters')" (click)="activeTab.set('chapters')" [disabled]="!bookId()">
           📑 Capítulos {{ bookId() ? '(' + chapters().length + ')' : '' }}
@@ -32,10 +32,10 @@ const CATEGORIES = [
 
       <!-- Tab: Info del libro -->
       @if (activeTab() === 'book') {
-        <div class="flex gap-8 items-start">
+        <div class="flex flex-col sm:flex-row gap-6 sm:gap-8 items-start">
 
           <!-- Portada -->
-          <div class="flex-shrink-0 flex flex-col items-center gap-2">
+          <div class="flex-shrink-0 flex flex-col items-center gap-2 w-full sm:w-auto">
             <input #coverInput type="file" accept="image/*" class="hidden" (change)="onCoverSelected($event)" />
             <button type="button"
               (click)="coverInput.click()"

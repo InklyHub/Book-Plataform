@@ -10,7 +10,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
   standalone: true,
   imports: [RouterLink, DecimalPipe, SpinnerComponent],
   template: `
-    <div class="p-6">
+    <div class="p-3 sm:p-6">
       <!-- Header -->
       <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-900">Mis Libros</h1>
@@ -59,7 +59,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
                   <span [class]="statusBadgeClass(book.status)">{{ statusLabel(book.status) }}</span>
                 </div>
                 <p class="text-sm text-gray-500">{{ book.genre }} · {{ book.chapters_count }} capítulos</p>
-                <div class="flex items-center gap-4 text-xs text-gray-400 mt-1">
+                <div class="flex items-center gap-2 sm:gap-4 text-xs text-gray-400 mt-1">
                   <span>⭐ {{ book.rating_avg | number:'1.1-1' }}</span>
                   <span>👁️ {{ book.views_count | number }}</span>
                   @if (book.is_monetized) { <span class="text-yellow-600">💰 Monetizado</span> }
@@ -67,8 +67,10 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
               </div>
 
               <!-- Acciones -->
-              <div class="flex gap-2 flex-shrink-0">
-                <a [routerLink]="['/writer/edit', book.id]" class="btn-secondary text-sm">Editar</a>
+              <div class="flex gap-1.5 sm:gap-2 flex-shrink-0">
+                <a [routerLink]="['/writer/edit', book.id]" class="btn-secondary text-xs sm:text-sm px-2 sm:px-3">
+                  <span class="hidden sm:inline">Editar</span><span class="sm:hidden">✏️</span>
+                </a>
                 <a [routerLink]="['/writer/analytics', book.id]" class="btn-ghost text-sm">📊</a>
                 <a [routerLink]="['/writer/monetize', book.id]" class="btn-ghost text-sm">💰</a>
               </div>

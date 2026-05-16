@@ -75,7 +75,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
         }
 
         <!-- Contenido -->
-        <main class="flex-1 max-w-3xl mx-auto w-full px-6 py-10">
+        <main class="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-8 sm:py-10">
           <h1 class="text-2xl font-bold mb-8" [class]="themeTitle()">{{ ch.title }}</h1>
           <div class="leading-relaxed whitespace-pre-wrap" [style.fontSize.px]="fontSize()"
             [class]="themeText()" [innerHTML]="ch.content"></div>
@@ -98,7 +98,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
 
         <!-- Panel de comentarios -->
         @if (showComments()) {
-          <div class="fixed right-0 top-0 h-screen w-80 bg-white shadow-2xl z-50 flex flex-col animate-fade-in">
+          <div class="fixed inset-0 md:inset-auto md:right-0 md:top-0 h-screen w-full md:w-80 bg-white shadow-2xl z-50 flex flex-col animate-fade-in">
             <div class="flex items-center justify-between p-4 border-b">
               <h3 class="font-bold text-gray-900">Comentarios</h3>
               <button (click)="showComments.set(false)" class="p-1 hover:bg-gray-100 rounded-lg">✕</button>
