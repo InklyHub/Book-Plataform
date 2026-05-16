@@ -28,7 +28,32 @@ async def list_chapters(book_id: UUID, db: DB, current_user: OptionalUser):
         .where(Chapter.book_id == book_id, Chapter.published_at.isnot(None))
         .order_by(Chapter.chapter_number)
     )
-    return result.scalars().all()
+    chapters = result.scalars().all()
+
+    if current_user:
+        # Capítulos que este usuario ya compró
+        purchases_result = await db.execute(
+            select(ChapterPurchase.chapter_id).where(
+                ChapterPurchase.user_id == current_user.id,
+                ChapterPurchase.chapter_id.in_([c.id for c in chapters]),
+            )
+        )
+        purchased_ids = set(purchases_result.scalars().all())
+
+        # El autor siempre puede leer sus propios capítulos
+        book = await db.get(Book, book_id)
+        is_author = book and book.author_id == current_user.id
+
+        if purchased_ids or is_author:
+            out = []
+            for ch in chapters:
+                item = ChapterListOut.model_validate(ch)
+                if is_author or ch.id in purchased_ids:
+                    item.is_locked = False
+                out.append(item)
+            return out
+
+    return chapters
 
 
 @router.get("/{chapter_id}", response_model=ChapterOut)
