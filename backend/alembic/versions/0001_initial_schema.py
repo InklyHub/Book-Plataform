@@ -337,11 +337,12 @@ def upgrade() -> None:
     """)
 
     op.execute("""
-        INSERT INTO books (id, title, description, author_id, genre, category, status, is_monetized, views_count, rating_avg, rating_count) VALUES
+        INSERT INTO books (id, title, description, cover_url, author_id, genre, category, status, is_monetized, views_count, rating_avg, rating_count) VALUES
         (
             'e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a21',
             'El Último Algoritmo',
             'En 2087, una IA desarrolla consciencia y decide que la humanidad es un error de cálculo. Solo una programadora con acceso al código fuente puede detenerla antes de que ejecute el protocolo final.',
+            'http://localhost:9000/book-covers/el_ultimo_algoritmo.png',
             'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
             'Sci-Fi', 'platform-originals', 'published', false, 1240, 4.50, 8
         ),
@@ -349,6 +350,7 @@ def upgrade() -> None:
             'f5eebc99-9c0b-4ef8-bb6d-6bb9bd380a22',
             'Crónicas del Viento',
             'Un mundo flotante sobre nubes eternas. Kael, el último navegante del cielo, debe cruzar la Tormenta Eterna para salvar a su pueblo antes de que las islas caigan al vacío.',
+            'http://localhost:9000/book-covers/cronicas_del_viento.png',
             'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12',
             'Fantasy', 'platform-originals', 'published', false, 870, 4.00, 5
         ),
