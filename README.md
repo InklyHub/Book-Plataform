@@ -53,7 +53,7 @@ Esto arranca PostgreSQL en el puerto `5432` y MinIO en el `9000`.
 
 ```bash
 cd backend
-python -m venv .venv
+python3 -m venv .venv
 .venv\Scripts\activate        # Windows
 source .venv/bin/activate     # Linux/Mac
 

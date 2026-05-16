@@ -47,9 +47,6 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "proxyConfig": "proxy.config.json"
-          },
           "configurations": {
             "production": { "buildTarget": "book-platform-frontend:build:production" },
             "development": { "buildTarget": "book-platform-frontend:build:development" }
