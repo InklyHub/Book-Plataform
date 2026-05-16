@@ -5,9 +5,11 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.core.security import (
     create_access_token,
+    create_password_reset_token,
     create_refresh_token,
     decode_token,
     hash_password,
@@ -15,14 +17,18 @@ from app.core.security import (
 )
 from app.models.user import User, UserPreferredGenre, UserReadingStats
 from app.schemas.user import (
+    ForgotPasswordRequest,
+    ForgotPasswordResponse,
     OnboardingGenres,
     RefreshRequest,
+    ResetPasswordRequest,
     TokenResponse,
     UserLogin,
     UserOut,
     UserRegister,
 )
 from app.dependencies import CurrentUser, DB
+from app.services.email_service import send_password_reset_email
 
 router = APIRouter()
 
@@ -85,6 +91,49 @@ async def refresh(body: RefreshRequest, db: DB):
         access_token=create_access_token(str(user.id), user.role),
         refresh_token=create_refresh_token(str(user.id)),
     )
+
+
+@router.post("/forgot-password", response_model=ForgotPasswordResponse)
+async def forgot_password(body: ForgotPasswordRequest, db: DB):
+    result = await db.execute(
+        select(User).where(User.email == body.email, User.is_active == True)
+    )
+    user = result.scalar_one_or_none()
+
+    # Siempre respondemos igual: no revelamos si el email existe (seguridad)
+    if not user:
+        return ForgotPasswordResponse(
+            message="Si el email está registrado, recibirás un enlace de recuperación."
+        )
+
+    reset_token = create_password_reset_token(str(user.id))
+    reset_url = f"{settings.FRONTEND_URL}/reset-password?token={reset_token}"
+
+    await send_password_reset_email(to_email=user.email, reset_url=reset_url)
+
+    dev_token = reset_token if settings.ENVIRONMENT == "development" else None
+
+    return ForgotPasswordResponse(
+        message="Si el email está registrado, recibirás un enlace de recuperación.",
+        reset_token=dev_token,
+    )
+
+
+@router.post("/reset-password")
+async def reset_password(body: ResetPasswordRequest, db: DB):
+    payload = decode_token(body.token)
+    if not payload or payload.get("type") != "password_reset":
+        raise HTTPException(status_code=400, detail="Token inválido o expirado")
+
+    result = await db.execute(
+        select(User).where(User.id == payload["sub"], User.is_active == True)
+    )
+    user = result.scalar_one_or_none()
+    if not user:
+        raise HTTPException(status_code=400, detail="Token inválido o expirado")
+
+    user.password_hash = hash_password(body.new_password)
+    return {"message": "Contraseña actualizada correctamente"}
 
 
 @router.post("/onboarding", response_model=UserOut)
