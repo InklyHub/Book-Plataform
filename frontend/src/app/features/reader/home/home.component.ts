@@ -32,17 +32,17 @@ const GENRES: Genre[] = [
         (searchChange)="searchQuery.set($event)"
         (search)="loadBooks()" />
 
-      <div class="p-6">
+      <div class="p-3 sm:p-6">
         <!-- Categorías -->
-        <div class="overflow-x-auto -mx-6 px-6 mb-5">
-          <div class="flex gap-2 min-w-max">
+        <div class="overflow-x-auto no-scrollbar mb-2">
+          <div class="flex gap-1.5 min-w-max">
             @for (cat of categories; track cat.id) {
               <button
                 (click)="selectCategory(cat.id)"
-                [class]="'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ' +
+                [class]="'px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ' +
                          (selectedCategory() === cat.id
                            ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-sm'
-                           : 'bg-white border border-gray-200 text-gray-600 hover:border-purple-300')">
+                           : 'bg-white border border-gray-200 text-gray-500 hover:border-purple-300 hover:text-purple-600')">
                 {{ cat.label }}
               </button>
             }
@@ -50,21 +50,23 @@ const GENRES: Genre[] = [
         </div>
 
         <!-- Géneros -->
-        <div class="flex gap-2 flex-wrap mb-6">
-          <button
-            (click)="selectedGenre.set(null); loadBooks()"
-            [class]="'px-3 py-1.5 rounded-lg text-xs font-medium transition-all ' +
-                     (!selectedGenre() ? 'bg-purple-100 text-purple-700' : 'text-gray-500 hover:bg-gray-100')">
-            Todos
-          </button>
-          @for (g of genres; track g) {
+        <div class="overflow-x-auto no-scrollbar mb-4">
+          <div class="flex gap-1 min-w-max py-1">
             <button
-              (click)="selectedGenre.set(g); loadBooks()"
-              [class]="'px-3 py-1.5 rounded-lg text-xs font-medium transition-all ' +
-                       (selectedGenre() === g ? 'bg-purple-100 text-purple-700' : 'text-gray-500 hover:bg-gray-100')">
-              {{ g }}
+              (click)="selectedGenre.set(null); loadBooks()"
+              [class]="'px-2 py-0.5 rounded text-[11px] font-medium transition-all ' +
+                       (!selectedGenre() ? 'text-purple-700 bg-purple-50' : 'text-gray-400 hover:text-gray-600')">
+              Todos
             </button>
-          }
+            @for (g of genres; track g) {
+              <button
+                (click)="selectedGenre.set(g); loadBooks()"
+                [class]="'px-2 py-0.5 rounded text-[11px] font-medium transition-all ' +
+                         (selectedGenre() === g ? 'text-purple-700 bg-purple-50' : 'text-gray-400 hover:text-gray-600')">
+                {{ g }}
+              </button>
+            }
+          </div>
         </div>
 
         <!-- NSFW Warning -->
@@ -96,7 +98,7 @@ const GENRES: Genre[] = [
             <p class="text-sm mt-1">Intenta con otra categoría o búsqueda</p>
           </div>
         } @else {
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3">
             @for (book of books(); track book.id) {
               <app-book-card [book]="book" />
             }
@@ -104,10 +106,12 @@ const GENRES: Genre[] = [
 
           <!-- Paginación -->
           @if (totalPages() > 1) {
-            <div class="flex justify-center gap-2 mt-8">
-              <button class="btn-secondary" [disabled]="page() === 1" (click)="changePage(page() - 1)">←</button>
-              <span class="flex items-center px-4 text-sm text-gray-600">Página {{ page() }} de {{ totalPages() }}</span>
-              <button class="btn-secondary" [disabled]="page() === totalPages()" (click)="changePage(page() + 1)">→</button>
+            <div class="flex justify-center items-center gap-2 mt-6">
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-purple-50 hover:border-purple-300 disabled:opacity-40 disabled:cursor-not-allowed text-sm transition-all"
+                [disabled]="page() === 1" (click)="changePage(page() - 1)">←</button>
+              <span class="text-xs text-gray-500 px-2">{{ page() }} / {{ totalPages() }}</span>
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-purple-50 hover:border-purple-300 disabled:opacity-40 disabled:cursor-not-allowed text-sm transition-all"
+                [disabled]="page() === totalPages()" (click)="changePage(page() + 1)">→</button>
             </div>
           }
         }

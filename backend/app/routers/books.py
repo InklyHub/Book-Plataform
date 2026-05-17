@@ -2,6 +2,7 @@ import math
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Query, UploadFile, File, status
+from app.services.storage_service import upload_cover as storage_upload_cover
 from sqlalchemy import func, select
 from sqlalchemy.orm import selectinload
 
@@ -30,22 +31,20 @@ async def list_books(
     page: int = Query(default=1, ge=1),
     size: int = Query(default=20, ge=1, le=100),
 ):
-    filters = [Book.status == status]
-    if category:
-        filters.append(Book.category == category)
-    if genre:
-        filters.append(Book.genre == genre)
-    if q:
-        filters.append(Book.title.ilike(f"%{q}%"))
-
-    total_result = await db.execute(select(func.count(Book.id)).where(*filters))
-    total = total_result.scalar_one()
-
     query = (
         select(Book)
-        .where(*filters)
+        .where(Book.status == status)
         .options(selectinload(Book.author), selectinload(Book.tags))
     )
+    if category:
+        query = query.where(Book.category == category)
+    if genre:
+        query = query.where(Book.genre == genre)
+    if q:
+        query = query.where(Book.title.ilike(f"%{q}%"))
+
+    total_result = await db.execute(select(func.count()).select_from(query.subquery()))
+    total = total_result.scalar_one()
 
     books_result = await db.execute(
         query.order_by(Book.views_count.desc()).offset((page - 1) * size).limit(size)
@@ -104,7 +103,7 @@ async def create_book(body: BookCreate, current_user: CurrentWriter, db: DB):
     for tag in set(body.tags):
         db.add(BookTag(book_id=book.id, tag=tag))
 
-    await db.refresh(book)
+    await db.refresh(book, attribute_names=['author', 'tags'])
     out = BookOut.model_validate(book)
     out.tags = body.tags
     out.chapters_count = 0
@@ -135,9 +134,9 @@ async def update_book(book_id: UUID, body: BookUpdate, current_user: CurrentWrit
             db.add(BookTag(book_id=book.id, tag=tag))
 
     await db.flush()
-    await db.refresh(book)
+    await db.refresh(book, attribute_names=['author', 'tags'])
     out = BookOut.model_validate(book)
-    out.tags = body.tags or [t.tag for t in book.tags]
+    out.tags = body.tags if body.tags is not None else [t.tag for t in book.tags]
     return out
 
 
@@ -150,6 +149,37 @@ async def delete_book(book_id: UUID, current_user: CurrentWriter, db: DB):
     if not book:
         raise HTTPException(status_code=404, detail="Libro no encontrado o sin permiso")
     await db.delete(book)
+
+
+@router.post("/{book_id}/cover")
+async def upload_book_cover(
+    book_id: UUID,
+    current_user: CurrentWriter,
+    db: DB,
+    file: UploadFile = File(...),
+):
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Solo se permiten archivos de imagen")
+
+    result = await db.execute(
+        select(Book).where(Book.id == book_id, Book.author_id == current_user.id)
+    )
+    book = result.scalar_one_or_none()
+    if not book:
+        raise HTTPException(status_code=404, detail="Libro no encontrado o sin permiso")
+
+    data = await file.read()
+    if len(data) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="La imagen no puede superar 5 MB")
+
+    try:
+        url = storage_upload_cover(str(book_id), data, file.content_type)
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    book.cover_url = url
+    await db.flush()
+    return {"cover_url": url}
 
 
 @router.post("/{book_id}/rate")

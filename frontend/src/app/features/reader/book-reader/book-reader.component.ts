@@ -1,8 +1,8 @@
-import { Component, inject, signal, OnInit, OnDestroy, input, HostListener } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject, signal, computed, effect, OnInit, OnDestroy, input, HostListener } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BookService } from '../../../core/services/book.service';
-import { Chapter, Comment } from '../../../core/models';
+import { Chapter, ChapterSummary, Comment } from '../../../core/models';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 
 @Component({
@@ -75,24 +75,30 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
         }
 
         <!-- Contenido -->
-        <main class="flex-1 max-w-3xl mx-auto w-full px-6 py-10">
+        <main class="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-8 sm:py-10">
           <h1 class="text-2xl font-bold mb-8" [class]="themeTitle()">{{ ch.title }}</h1>
           <div class="leading-relaxed whitespace-pre-wrap" [style.fontSize.px]="fontSize()"
             [class]="themeText()" [innerHTML]="ch.content"></div>
 
           <!-- Navegación entre capítulos -->
-          <div class="flex justify-between mt-16 pt-8 border-t border-gray-200/30">
+          <div class="flex justify-between items-center mt-16 pt-8 border-t border-gray-200/30">
             <span class="text-sm opacity-60">Cap. {{ ch.chapter_number }}</span>
             <div class="flex gap-3">
-              <button class="btn-secondary text-sm" disabled>← Anterior</button>
-              <button class="btn-secondary text-sm" disabled>Siguiente →</button>
+              @if (prevChapter()) {
+                <button class="btn-secondary text-sm" (click)="goToChapter(prevChapter()!.id)">← Anterior</button>
+              }
+              @if (nextChapter()) {
+                <button class="btn-secondary text-sm" (click)="goToChapter(nextChapter()!.id)">Siguiente →</button>
+              } @else {
+                <button class="btn-secondary text-sm opacity-40 cursor-not-allowed" disabled>Último capítulo</button>
+              }
             </div>
           </div>
         </main>
 
         <!-- Panel de comentarios -->
         @if (showComments()) {
-          <div class="fixed right-0 top-0 h-screen w-80 bg-white shadow-2xl z-50 flex flex-col animate-fade-in">
+          <div class="fixed inset-0 md:inset-auto md:right-0 md:top-0 h-screen w-full md:w-80 bg-white shadow-2xl z-50 flex flex-col animate-fade-in">
             <div class="flex items-center justify-between p-4 border-b">
               <h3 class="font-bold text-gray-900">Comentarios</h3>
               <button (click)="showComments.set(false)" class="p-1 hover:bg-gray-100 rounded-lg">✕</button>
@@ -132,8 +138,10 @@ export class BookReaderComponent implements OnInit, OnDestroy {
   readonly chapterId = input.required<string>();
 
   private readonly bookService = inject(BookService);
+  private readonly router = inject(Router);
 
   readonly chapter = signal<Chapter | null>(null);
+  readonly chapters = signal<ChapterSummary[]>([]);
   readonly comments = signal<Comment[]>([]);
   readonly loading = signal(true);
   readonly liked = signal(false);
@@ -146,18 +154,39 @@ export class BookReaderComponent implements OnInit, OnDestroy {
 
   private saveTimer: any;
 
+  readonly prevChapter = computed(() => {
+    const list = this.chapters();
+    const idx = list.findIndex(c => c.id === this.chapterId());
+    return idx > 0 ? list[idx - 1] : null;
+  });
+
+  readonly nextChapter = computed(() => {
+    const list = this.chapters();
+    const idx = list.findIndex(c => c.id === this.chapterId());
+    return idx >= 0 && idx < list.length - 1 ? list[idx + 1] : null;
+  });
+
   readonly themes: { value: 'light' | 'sepia' | 'dark'; label: string; bg: string; text: string }[] = [
     { value: 'light', label: 'Claro', bg: 'bg-white', text: 'text-gray-900' },
     { value: 'sepia', label: 'Sepia', bg: 'bg-amber-50', text: 'text-amber-900' },
     { value: 'dark',  label: 'Oscuro', bg: 'bg-gray-900', text: 'text-gray-100' },
   ];
 
-  ngOnInit(): void {
-    this.bookService.getChapter(this.chapterId()).subscribe({
-      next: ch => { this.chapter.set(ch); this.loading.set(false); },
-      error: () => this.loading.set(false),
+  constructor() {
+    effect(() => {
+      const id = this.chapterId();
+      this.loading.set(true);
+      this.liked.set(false);
+      this.bookService.getChapter(id).subscribe({
+        next: ch => { this.chapter.set(ch); this.loading.set(false); },
+        error: () => this.loading.set(false),
+      });
+      this.bookService.getComments(id).subscribe(cs => this.comments.set(cs));
     });
-    this.bookService.getComments(this.chapterId()).subscribe(cs => this.comments.set(cs));
+  }
+
+  ngOnInit(): void {
+    this.bookService.getChapters(this.bookId()).subscribe(chs => this.chapters.set(chs));
   }
 
   ngOnDestroy(): void {
@@ -176,6 +205,11 @@ export class BookReaderComponent implements OnInit, OnDestroy {
     this.saveTimer = setTimeout(() => {
       this.bookService.saveProgress(this.chapterId(), pct, pct >= 95).subscribe();
     }, 2000);
+  }
+
+  goToChapter(chapterId: string): void {
+    window.scrollTo(0, 0);
+    this.router.navigate(['/read', this.bookId(), chapterId]);
   }
 
   toggleLike(): void {

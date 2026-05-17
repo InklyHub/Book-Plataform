@@ -10,7 +10,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
   standalone: true,
   imports: [RouterLink, DecimalPipe, SpinnerComponent],
   template: `
-    <div class="p-6">
+    <div class="p-3 sm:p-6">
       <div class="flex items-center gap-3 mb-6">
         <a routerLink="/writer" class="btn-ghost">← Volver</a>
         <h1 class="text-2xl font-bold text-gray-900">Analytics</h1>

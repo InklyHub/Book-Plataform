@@ -17,7 +17,7 @@ const TABS: { value: LibraryStatus | 'all'; label: string; icon: string }[] = [
   standalone: true,
   imports: [RouterLink, StarRatingComponent, SpinnerComponent],
   template: `
-    <div class="p-6">
+    <div class="p-3 sm:p-6">
       <h1 class="text-2xl font-bold text-gray-900 mb-6">Mi Biblioteca</h1>
 
       <!-- Tabs -->

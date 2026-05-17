@@ -21,9 +21,9 @@ const CATEGORIES = [
   standalone: true,
   imports: [ReactiveFormsModule, FormsModule, SpinnerComponent],
   template: `
-    <div class="p-6 max-w-4xl">
+    <div class="p-3 sm:p-6 max-w-5xl mx-auto">
       <!-- Tabs -->
-      <div class="flex gap-4 mb-6 border-b border-gray-200">
+      <div class="flex gap-2 sm:gap-4 mb-6 border-b border-gray-200 overflow-x-auto no-scrollbar">
         <button [class]="tabClass('book')" (click)="activeTab.set('book')">📋 Info del libro</button>
         <button [class]="tabClass('chapters')" (click)="activeTab.set('chapters')" [disabled]="!bookId()">
           📑 Capítulos {{ bookId() ? '(' + chapters().length + ')' : '' }}
@@ -32,64 +32,97 @@ const CATEGORIES = [
 
       <!-- Tab: Info del libro -->
       @if (activeTab() === 'book') {
-        <form [formGroup]="bookForm" (ngSubmit)="saveBook()" class="space-y-5">
-          <div class="grid md:grid-cols-2 gap-5">
-            <div class="md:col-span-2">
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Título del libro *</label>
-              <input formControlName="title" type="text" class="input-field" placeholder="El nombre de tu obra..." />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Género *</label>
-              <select formControlName="genre" class="input-field">
-                <option value="">Selecciona un género</option>
-                @for (g of genres; track g) { <option [value]="g">{{ g }}</option> }
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Categoría *</label>
-              <select formControlName="category" class="input-field">
-                <option value="">Selecciona una categoría</option>
-                @for (c of categories; track c.value) { <option [value]="c.value">{{ c.label }}</option> }
-              </select>
-            </div>
-            <div class="md:col-span-2">
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Descripción</label>
-              <textarea formControlName="description" rows="4"
-                placeholder="La sinopsis de tu libro..."
-                class="input-field resize-none"></textarea>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Etiquetas (separadas por coma)</label>
-              <input formControlName="tagsInput" type="text" class="input-field" placeholder="magia, aventura, épico..." />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Estado</label>
-              <select formControlName="status" class="input-field">
-                <option value="draft">Borrador</option>
-                <option value="published">Publicado</option>
-                <option value="completed">Completado</option>
-              </select>
-            </div>
-          </div>
+        <div class="flex flex-col sm:flex-row gap-6 sm:gap-8 items-start">
 
-          @if (bookError()) {
-            <div class="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl">{{ bookError() }}</div>
-          }
-          @if (bookSuccess()) {
-            <div class="bg-green-50 border border-green-200 text-green-600 text-sm px-4 py-3 rounded-xl">{{ bookSuccess() }}</div>
-          }
-
-          <div class="flex gap-3">
-            <button type="submit" class="btn-primary" [disabled]="savingBook() || bookForm.invalid">
-              @if (savingBook()) { <app-spinner size="sm" /> } @else { {{ bookId() ? 'Actualizar libro' : 'Crear libro' }} }
+          <!-- Portada -->
+          <div class="flex-shrink-0 flex flex-col items-center gap-2 w-full sm:w-auto">
+            <input #coverInput type="file" accept="image/*" class="hidden" (change)="onCoverSelected($event)" />
+            <button type="button"
+              (click)="coverInput.click()"
+              class="w-40 h-56 rounded-xl border-2 border-dashed border-gray-300 hover:border-purple-400 transition-colors overflow-hidden bg-gray-50 hover:bg-purple-50 flex flex-col items-center justify-center group relative">
+              @if (coverPreview()) {
+                <img [src]="coverPreview()!" class="w-full h-full object-cover" alt="Portada" />
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span class="text-white text-xs font-medium">Cambiar portada</span>
+                </div>
+              } @else {
+                <svg class="w-8 h-8 text-gray-300 group-hover:text-purple-400 transition-colors mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span class="text-xs text-gray-400 group-hover:text-purple-500 transition-colors text-center px-2">Agregar una portada</span>
+              }
             </button>
-            @if (bookId()) {
-              <button type="button" class="btn-secondary" (click)="activeTab.set('chapters')">
-                Ver capítulos →
-              </button>
+            @if (uploadingCover()) {
+              <p class="text-xs text-purple-600 flex items-center gap-1"><app-spinner size="sm" /> Subiendo...</p>
+            } @else if (coverPreview() && bookId()) {
+              <p class="text-xs text-green-600">✓ Portada guardada</p>
+            } @else if (coverPreview() && !bookId()) {
+              <p class="text-xs text-amber-600 text-center">Se subirá al crear el libro</p>
             }
+            <p class="text-xs text-gray-400 text-center">JPG, PNG · Máx. 5 MB</p>
           </div>
-        </form>
+
+          <!-- Formulario -->
+          <form [formGroup]="bookForm" (ngSubmit)="saveBook()" class="flex-1 space-y-5">
+            <div class="grid md:grid-cols-2 gap-5">
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Título del libro *</label>
+                <input formControlName="title" type="text" class="input-field" placeholder="El nombre de tu obra..." />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Género *</label>
+                <select formControlName="genre" class="input-field">
+                  <option value="">Selecciona un género</option>
+                  @for (g of genres; track g) { <option [value]="g">{{ g }}</option> }
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Categoría *</label>
+                <select formControlName="category" class="input-field">
+                  <option value="">Selecciona una categoría</option>
+                  @for (c of categories; track c.value) { <option [value]="c.value">{{ c.label }}</option> }
+                </select>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Descripción</label>
+                <textarea formControlName="description" rows="4"
+                  placeholder="La sinopsis de tu libro..."
+                  class="input-field resize-none"></textarea>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Etiquetas (separadas por coma)</label>
+                <input formControlName="tagsInput" type="text" class="input-field" placeholder="magia, aventura, épico..." />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Estado</label>
+                <select formControlName="status" class="input-field">
+                  <option value="draft">Borrador</option>
+                  <option value="published">Publicado</option>
+                  <option value="completed">Completado</option>
+                </select>
+              </div>
+            </div>
+
+            @if (bookError()) {
+              <div class="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl">{{ bookError() }}</div>
+            }
+            @if (bookSuccess()) {
+              <div class="bg-green-50 border border-green-200 text-green-600 text-sm px-4 py-3 rounded-xl">{{ bookSuccess() }}</div>
+            }
+
+            <div class="flex gap-3">
+              <button type="submit" class="btn-primary" [disabled]="savingBook() || bookForm.invalid">
+                @if (savingBook()) { <app-spinner size="sm" /> } @else { {{ bookId() ? 'Actualizar libro' : 'Crear libro' }} }
+              </button>
+              @if (bookId()) {
+                <button type="button" class="btn-secondary" (click)="activeTab.set('chapters')">
+                  Ver capítulos →
+                </button>
+              }
+            </div>
+          </form>
+        </div>
       }
 
       <!-- Tab: Capítulos -->
@@ -186,8 +219,12 @@ export class EditorComponent implements OnInit {
   readonly editingChapter = signal<ChapterSummary | null>(null);
   readonly savingBook = signal(false);
   readonly savingChapter = signal(false);
+  readonly uploadingCover = signal(false);
   readonly bookError = signal('');
   readonly bookSuccess = signal('');
+  readonly coverPreview = signal<string | null>(null);
+
+  private pendingCoverFile: File | null = null;
 
   readonly genres = GENRES;
   readonly categories = CATEGORIES;
@@ -220,9 +257,33 @@ export class EditorComponent implements OnInit {
           tagsInput: b.tags.join(', '),
           status: b.status,
         });
+        if (b.cover_url) this.coverPreview.set(b.cover_url);
       });
       this.loadChapters();
     }
+  }
+
+  onCoverSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => this.coverPreview.set(reader.result as string);
+    reader.readAsDataURL(file);
+
+    if (this.bookId()) {
+      this.uploadCoverFile(file);
+    } else {
+      this.pendingCoverFile = file;
+    }
+  }
+
+  private uploadCoverFile(file: File): void {
+    this.uploadingCover.set(true);
+    this.bookService.uploadCover(this.bookId()!, file).subscribe({
+      next: res => { this.coverPreview.set(res.cover_url); this.uploadingCover.set(false); },
+      error: () => this.uploadingCover.set(false),
+    });
   }
 
   loadChapters(): void {
@@ -245,10 +306,18 @@ export class EditorComponent implements OnInit {
 
     obs.subscribe({
       next: b => {
-        this.bookSuccess.set(this.bookId() ? '¡Libro actualizado!' : '¡Libro creado!');
         this.savingBook.set(false);
-        if (!this.bookId()) this.router.navigate(['/writer/edit', b.id]);
+        this.bookSuccess.set(this.bookId() ? '¡Libro actualizado!' : '¡Libro creado!');
         setTimeout(() => this.bookSuccess.set(''), 3000);
+        if (!this.bookId()) {
+          if (this.pendingCoverFile) {
+            this.bookService.uploadCover(b.id, this.pendingCoverFile).subscribe(res => {
+              this.coverPreview.set(res.cover_url);
+              this.pendingCoverFile = null;
+            });
+          }
+          this.router.navigate(['/writer/edit', b.id]);
+        }
       },
       error: err => { this.bookError.set(err.message); this.savingBook.set(false); },
     });

@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { BookService } from '../../../core/services/book.service';
 import { MonetizationService } from '../../../core/services/monetization.service';
@@ -26,6 +26,13 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
               <img [src]="b.cover_url" class="w-full h-full object-cover" alt="" />
             }
           </div>
+          <!-- Botón volver -->
+          <button (click)="goBack()"
+            class="absolute top-4 left-4 z-10 p-2 rounded-full bg-black/30 hover:bg-black/50 text-white transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
           <div class="relative max-w-5xl mx-auto px-6 py-10 flex gap-8">
             <!-- Portada -->
             <div class="w-36 h-52 rounded-2xl overflow-hidden shadow-2xl flex-shrink-0 bg-white/10">
@@ -59,8 +66,15 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
                     Empezar a leer
                   </a>
                 }
-                <button (click)="addToLibrary()" class="btn-secondary bg-white/10 border-white/30 text-white hover:bg-white/20">
-                  {{ inLibrary() ? '✅ En biblioteca' : '+ Biblioteca' }}
+                <button (click)="toggleLibrary()" [disabled]="libraryLoading()"
+                  [class]="'btn-secondary border-white/30 text-white transition-colors group ' + (inLibrary() ? 'bg-white/20 hover:bg-red-500/40 hover:border-red-300' : 'bg-white/10 hover:bg-white/20')">
+                  @if (libraryLoading()) { ⏳ }
+                  @else if (inLibrary()) {
+                    <span class="group-hover:hidden">✅ En biblioteca</span>
+                    <span class="hidden group-hover:inline">✕ Quitar</span>
+                  } @else {
+                    + Añadir a biblioteca
+                  }
                 </button>
               </div>
             </div>
@@ -169,6 +183,7 @@ export class BookDetailComponent implements OnInit {
 
   private readonly bookService = inject(BookService);
   private readonly monetizationService = inject(MonetizationService);
+  private readonly router = inject(Router);
   readonly auth = inject(AuthService);
 
   readonly book = signal<Book | null>(null);
@@ -177,6 +192,7 @@ export class BookDetailComponent implements OnInit {
   readonly loading = signal(true);
   readonly loadingChapters = signal(true);
   readonly inLibrary = signal(false);
+  readonly libraryLoading = signal(false);
   readonly userRating = signal(0);
   readonly unlockTarget = signal<ChapterSummary | null>(null);
   readonly unlocking = signal(false);
@@ -192,6 +208,13 @@ export class BookDetailComponent implements OnInit {
       this.loadingChapters.set(false);
     });
     this.bookService.getQuizzes(this.id()).subscribe(qs => this.quizzes.set(qs));
+    this.bookService.getLibrary().subscribe(items => {
+      this.inLibrary.set(items.some(item => item.book.id === this.id()));
+    });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/home']);
   }
 
   categoryLabel(cat: string): string {
@@ -203,9 +226,19 @@ export class BookDetailComponent implements OnInit {
     return map[cat] ?? cat;
   }
 
-  addToLibrary(): void {
-    if (this.inLibrary()) return;
-    this.bookService.addToLibrary(this.id()).subscribe(() => this.inLibrary.set(true));
+  toggleLibrary(): void {
+    this.libraryLoading.set(true);
+    if (this.inLibrary()) {
+      this.bookService.removeFromLibrary(this.id()).subscribe({
+        next: () => { this.inLibrary.set(false); this.libraryLoading.set(false); },
+        error: () => this.libraryLoading.set(false),
+      });
+    } else {
+      this.bookService.addToLibrary(this.id()).subscribe({
+        next: () => { this.inLibrary.set(true); this.libraryLoading.set(false); },
+        error: () => this.libraryLoading.set(false),
+      });
+    }
   }
 
   rateBook(score: number): void {

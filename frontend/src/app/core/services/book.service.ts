@@ -42,6 +42,12 @@ export class BookService {
     return this.api.delete<void>(`/books/${id}`);
   }
 
+  uploadCover(bookId: string, file: File): Observable<{ cover_url: string }> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.api.postForm<{ cover_url: string }>(`/books/${bookId}/cover`, form);
+  }
+
   rateBook(id: string, score: number): Observable<{ rating_avg: number; rating_count: number }> {
     return this.api.post(`/books/${id}/rate`, { score });
   }

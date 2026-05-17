@@ -1,4 +1,16 @@
-export type UserRole = 'reader' | 'writer';
+// 0 = lector, 1 = escritor, 2 = ambos
+export type UserRole = 0 | 1 | 2;
+export const ROLE_READER = 0;
+export const ROLE_WRITER = 1;
+export const ROLE_BOTH = 2;
+
+export function isReader(role: UserRole): boolean {
+  return role === ROLE_READER || role === ROLE_BOTH;
+}
+
+export function isWriter(role: UserRole): boolean {
+  return role === ROLE_WRITER || role === ROLE_BOTH;
+}
 
 export type Genre =
   | 'Romance' | 'Fantasy' | 'Sci-Fi' | 'Drama' | 'Horror'

@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator
@@ -51,6 +50,7 @@ class BookCreate(BaseModel):
 class BookUpdate(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=300)
     description: str | None = None
+    cover_url: str | None = None
     genre: str | None = None
     category: str | None = None
     age_restriction: str | None = None
@@ -96,10 +96,10 @@ class BookOut(BaseModel):
 
     @field_validator("tags", mode="before")
     @classmethod
-    def extract_tags(cls, v: Any) -> list[str]:
-        if isinstance(v, list) and v and hasattr(v[0], "tag"):
+    def coerce_tags(cls, v: list) -> list[str]:
+        if v and not isinstance(v[0], str):
             return [item.tag for item in v]
-        return v or []
+        return v
 
 
 class BookListOut(BaseModel):
@@ -119,10 +119,10 @@ class BookListOut(BaseModel):
 
     @field_validator("tags", mode="before")
     @classmethod
-    def extract_tags(cls, v: Any) -> list[str]:
-        if isinstance(v, list) and v and hasattr(v[0], "tag"):
+    def coerce_tags(cls, v: list) -> list[str]:
+        if v and not isinstance(v[0], str):
             return [item.tag for item in v]
-        return v or []
+        return v
 
 
 class BookRateIn(BaseModel):

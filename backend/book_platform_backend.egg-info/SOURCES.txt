@@ -32,6 +32,7 @@ app/schemas/quiz.py
 app/schemas/user.py
 app/services/__init__.py
 app/services/book_service.py
+app/services/email_service.py
 app/services/payment_service.py
 app/services/reader_service.py
 book_platform_backend.egg-info/PKG-INFO

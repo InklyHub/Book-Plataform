@@ -23,7 +23,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
           <p class="text-gray-500 mt-1">Únete a miles de lectores y escritores</p>
         </div>
 
-        <div class="card p-8">
+        <div class="card p-5 sm:p-8">
           <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1.5">Nombre de usuario</label>
@@ -99,15 +99,15 @@ export class RegisterComponent {
   readonly error = signal('');
 
   readonly roleOptions = [
-    { value: 'reader', label: 'Lector', icon: '📖' },
-    { value: 'writer', label: 'Escritor', icon: '✍️' },
+    { value: 0, label: 'Lector', icon: '📖' },
+    { value: 1, label: 'Escritor', icon: '✍️' },
   ];
 
   readonly form = this.fb.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]],
-    role: ['reader'],
+    role: [0],
   });
 
   onSubmit(): void {
@@ -121,7 +121,7 @@ export class RegisterComponent {
         this.auth.loadProfile().subscribe(() => this.router.navigate(['/onboarding']));
       },
       error: (err) => {
-        this.error.set(err.message || 'Error al crear la cuenta');
+        this.error.set(err?.message || 'Error al crear la cuenta');
         this.loading.set(false);
       },
     });
