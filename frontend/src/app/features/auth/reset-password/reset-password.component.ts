@@ -15,88 +15,139 @@ const passwordsMatch = (group: AbstractControl): ValidationErrors | null => {
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, SpinnerComponent],
   template: `
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-      <div class="w-full max-w-md animate-fade-in">
+    <div class="min-h-screen flex items-center justify-center p-6" style="background-color: #FAF6F0;">
+      <div class="w-full max-w-sm animate-fade-in">
 
         <!-- Logo -->
-        <div class="text-center mb-8">
-          <div class="inline-flex w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-blue-600 items-center justify-center mb-4">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        <div class="flex items-center gap-2.5 mb-10">
+          <div class="w-8 h-8 rounded-md flex items-center justify-center" style="background-color: #1A1410;">
+            <svg class="w-4 h-4" style="color: #C46B1E;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
           </div>
-          <h1 class="text-3xl font-bold text-gray-900">Nueva contraseña</h1>
-          <p class="text-gray-500 mt-1">Elige una contraseña segura</p>
+          <span class="font-bold text-lg tracking-tight"
+                style="color: #1A1410; font-family: 'Playfair Display', Georgia, serif;">Inkly</span>
         </div>
 
-        <div class="card p-5 sm:p-8">
+        <div class="bg-white rounded-md p-8" style="border: 1px solid #DDD6D1;">
 
-          <!-- Token inválido -->
           @if (tokenMissing()) {
-            <div class="text-center space-y-4">
-              <div class="inline-flex w-14 h-14 rounded-full bg-red-100 items-center justify-center">
-                <svg class="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Token inválido -->
+            <div class="text-center space-y-5">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center mx-auto"
+                   style="background-color: #F5E0DA;">
+                <svg class="w-6 h-6" style="color: #A8432B;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
-              <p class="text-gray-700 font-medium">Enlace inválido o expirado</p>
-              <p class="text-gray-500 text-sm">Este enlace no es válido o ha expirado (duran 15 minutos).</p>
-              <a routerLink="/forgot-password" class="inline-block btn-primary text-sm px-6 py-2 mt-2">
+              <div>
+                <h1 class="text-xl font-bold"
+                    style="color: #1A1410; font-family: 'Playfair Display', Georgia, serif;">
+                  Enlace inválido
+                </h1>
+                <p class="text-sm mt-2 leading-relaxed" style="color: #5C4E44;">
+                  Este enlace no es válido o ha expirado. Los enlaces de recuperación duran 15 minutos.
+                </p>
+              </div>
+              <a routerLink="/forgot-password" class="btn-primary inline-flex">
                 Solicitar nuevo enlace
               </a>
             </div>
           }
 
-          <!-- Éxito -->
           @if (done()) {
-            <div class="text-center space-y-4">
-              <div class="inline-flex w-14 h-14 rounded-full bg-green-100 items-center justify-center">
-                <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Éxito -->
+            <div class="text-center space-y-5">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center mx-auto"
+                   style="background-color: rgba(196,107,30,0.12);">
+                <svg class="w-6 h-6" style="color: #C46B1E;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <p class="text-gray-700 font-medium">¡Contraseña actualizada!</p>
-              <p class="text-gray-500 text-sm">Ya puedes iniciar sesión con tu nueva contraseña.</p>
-              <a routerLink="/login" class="inline-block btn-primary text-sm px-6 py-2 mt-2">
+              <div>
+                <h1 class="text-xl font-bold"
+                    style="color: #1A1410; font-family: 'Playfair Display', Georgia, serif;">
+                  Contraseña actualizada
+                </h1>
+                <p class="text-sm mt-2" style="color: #5C4E44;">
+                  Ya puedes iniciar sesión con tu nueva contraseña.
+                </p>
+              </div>
+              <a routerLink="/login" class="btn-primary inline-flex">
                 Ir al inicio de sesión
               </a>
             </div>
           }
 
-          <!-- Formulario -->
           @if (!tokenMissing() && !done()) {
-            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
+            <!-- Formulario -->
+            <div class="mb-7">
+              <h1 class="text-2xl font-bold tracking-tight"
+                  style="color: #1A1410; font-family: 'Playfair Display', Georgia, serif;">
+                Nueva contraseña
+              </h1>
+              <p class="text-sm mt-1.5" style="color: #5C4E44;">
+                Elige una contraseña segura para tu cuenta.
+              </p>
+            </div>
+
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4" novalidate>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Nueva contraseña</label>
-                <input formControlName="newPassword" type="password" class="input-field"
-                  placeholder="••••••••" autocomplete="new-password" />
+                <label for="new-password" class="block text-sm font-semibold mb-2" style="color: #1A1410;">
+                  Nueva contraseña
+                </label>
+                <input id="new-password" formControlName="newPassword" type="password"
+                  placeholder="••••••••" autocomplete="new-password"
+                  [attr.aria-invalid]="form.get('newPassword')?.invalid && form.get('newPassword')?.touched"
+                  class="input-field w-full"
+                  [style.border-color]="(form.get('newPassword')?.invalid && form.get('newPassword')?.touched) ? '#A8432B' : '#DDD6D1'" />
                 @if (form.get('newPassword')?.invalid && form.get('newPassword')?.touched) {
-                  <p class="text-red-500 text-xs mt-1">Mínimo 8 caracteres</p>
+                  <p class="text-xs mt-1.5 flex items-center gap-1" style="color: #A8432B;" role="alert">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    Mínimo 8 caracteres
+                  </p>
                 }
               </div>
+
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Confirmar contraseña</label>
-                <input formControlName="confirmPassword" type="password" class="input-field"
-                  placeholder="••••••••" autocomplete="new-password" />
+                <label for="confirm-password" class="block text-sm font-semibold mb-2" style="color: #1A1410;">
+                  Confirmar contraseña
+                </label>
+                <input id="confirm-password" formControlName="confirmPassword" type="password"
+                  placeholder="••••••••" autocomplete="new-password"
+                  [attr.aria-invalid]="form.hasError('mismatch') && form.get('confirmPassword')?.touched"
+                  class="input-field w-full"
+                  [style.border-color]="(form.hasError('mismatch') && form.get('confirmPassword')?.touched) ? '#A8432B' : '#DDD6D1'" />
                 @if (form.hasError('mismatch') && form.get('confirmPassword')?.touched) {
-                  <p class="text-red-500 text-xs mt-1">Las contraseñas no coinciden</p>
+                  <p class="text-xs mt-1.5 flex items-center gap-1" style="color: #A8432B;" role="alert">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    Las contraseñas no coinciden
+                  </p>
                 }
               </div>
 
               @if (error()) {
-                <div class="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl">
+                <div class="flex items-start gap-2.5 text-sm px-4 py-3 rounded-md"
+                     style="background-color: #F5E0DA; border: 1px solid #A8432B; color: #A8432B;"
+                     role="alert">
+                  <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
                   {{ error() }}
                 </div>
               }
 
-              <button type="submit" class="btn-primary w-full" [disabled]="loading() || form.invalid">
+              <button type="submit" class="btn-primary w-full py-3 mt-2" [disabled]="loading() || form.invalid">
                 @if (loading()) { <app-spinner size="sm" /> } @else { Establecer nueva contraseña }
               </button>
             </form>
           }
-
         </div>
       </div>
     </div>

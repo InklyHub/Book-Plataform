@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(docker exec book-platform-db-1 *)"
+      "PowerShell(docker exec book-platform-db-1 *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\roman\\\\IdeaProjects\\\\book-platform\\\\frontend\\\\src\" -Recurse -Force)",
+      "Bash(Select-Object FullName)",
+      "PowerShell(head *)"
     ]
   }
 }

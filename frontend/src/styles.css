@@ -2,106 +2,218 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Google Fonts ─────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap');
+
 @layer base {
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
+  *, *::before, *::after { box-sizing: border-box; }
 
   html {
-    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-family: 'DM Sans', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply bg-gray-50 text-gray-900;
+    background-color: #FAF6F0;
+    color: #1A1410;
     margin: 0;
+    line-height: 1.6;
   }
 
-  h1 { @apply text-2xl font-semibold; }
-  h2 { @apply text-xl font-semibold; }
-  h3 { @apply text-lg font-medium; }
+  h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    @apply text-2xl font-bold tracking-tight;
+    color: #1A1410;
+  }
+  h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    @apply text-xl font-bold tracking-tight;
+    color: #1A1410;
+  }
+  h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    @apply text-base font-semibold;
+    color: #1A1410;
+  }
+
+  ::selection {
+    background: rgba(196, 107, 30, 0.18);
+    color: #1A1410;
+  }
 }
 
 @layer components {
+
+  /* ── Botones ── */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
-           bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium
-           hover:from-purple-700 hover:to-blue-700 transition-all duration-200
-           disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2
+           px-5 py-2.5 rounded-md
+           font-semibold text-sm
+           transition-all duration-200
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none;
+    background-color: #C46B1E;
+    color: white;
   }
+  .btn-primary:hover:not(:disabled) {
+    background-color: #A8591A;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(196, 107, 30, 0.35);
+  }
+  .btn-primary:active:not(:disabled) { transform: translateY(0); }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
-           border border-gray-200 bg-white text-gray-700 font-medium
-           hover:bg-gray-50 transition-all duration-200;
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2.5 rounded-md
+           font-medium text-sm
+           transition-colors duration-150
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+           disabled:opacity-40 disabled:cursor-not-allowed;
+    background-color: #FFFFFF;
+    border: 1.5px solid #DDD6D1;
+    color: #5C4E44;
+  }
+  .btn-secondary:hover:not(:disabled) {
+    border-color: #8C7B70;
+    color: #1A1410;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg
-           text-gray-600 hover:bg-gray-100 transition-all duration-200;
+    @apply inline-flex items-center justify-center gap-2
+           px-3 py-2 rounded-md
+           font-medium text-sm
+           transition-colors duration-150
+           focus-visible:outline-none focus-visible:ring-2;
+    color: #5C4E44;
+  }
+  .btn-ghost:hover { background-color: #F0EBE6; color: #1A1410; }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2
+           px-5 py-2.5 rounded-md
+           font-medium text-sm
+           transition-all duration-150
+           focus-visible:outline-none;
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,.25);
+    color: #FAF6F0;
+  }
+  .btn-outline:hover {
+    background: rgba(255,255,255,.08);
+    border-color: rgba(255,255,255,.5);
   }
 
+  /* ── Cards ── */
   .card {
-    @apply bg-white rounded-2xl border border-gray-100 shadow-sm;
+    @apply bg-white rounded-xl border;
+    border-color: #DDD6D1;
+    box-shadow: 0 1px 2px rgba(26,20,16,.06);
   }
 
+  /* ── Inputs ── */
   .input-field {
-    @apply w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50
-           focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
-           transition-all duration-200 text-sm;
+    @apply w-full px-4 py-3 rounded-md text-sm transition duration-150;
+    border: 1.5px solid #DDD6D1;
+    background: #FFFFFF;
+    color: #1A1410;
+    font-family: inherit;
+  }
+  .input-field::placeholder { color: #8C7B70; }
+  .input-field:focus {
+    outline: none;
+    border-color: #C46B1E;
+    box-shadow: 0 0 0 3px rgba(196,107,30,.12);
   }
 
+  /* ── Badges ── */
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
   }
+  .badge-amber  { @apply badge; background-color: #FAE8D5; color: #C46B1E; }
+  .badge-sage   { @apply badge; background-color: #E6EDE5; color: #4A6741; }
+  .badge-ink    { @apply badge; background-color: #F0EBE6; color: #5C4E44; }
+  .badge-blue   { @apply badge bg-blue-50 text-blue-700; }
 
-  .badge-purple {
-    @apply badge bg-purple-100 text-purple-700;
-  }
-
-  .badge-blue {
-    @apply badge bg-blue-100 text-blue-700;
-  }
-
-  .badge-green {
-    @apply badge bg-green-100 text-green-700;
-  }
-
-  .badge-orange {
-    @apply badge bg-orange-100 text-orange-700;
-  }
-
+  /* ── Sidebar links (dentro de sidebar oscuro) ── */
   .sidebar-link {
-    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600
-           hover:bg-purple-50 hover:text-purple-700 transition-all duration-200 font-medium;
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm
+           font-medium
+           transition-colors duration-150 relative;
+    color: #8C7B70;
   }
-
+  .sidebar-link:hover {
+    background: rgba(255,255,255,.06);
+    color: #DDD6D1;
+  }
   .sidebar-link.active {
-    @apply bg-purple-50 text-purple-700;
+    color: #FAF6F0;
+    background: rgba(255,255,255,.10);
   }
 
-  .gradient-text {
-    @apply bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent;
-  }
-
+  /* ── Page header ── */
   .page-header {
-    @apply sticky top-0 z-40 bg-white bg-opacity-80 backdrop-blur-md border-b border-gray-100;
+    @apply sticky top-0 z-40 border-b;
+    border-color: #DDD6D1;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background-color: rgba(250,246,240,.92);
   }
+
+  /* ── Section title (Playfair Display) ── */
+  .section-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    @apply text-xl font-bold tracking-tight;
+    color: #1A1410;
+  }
+
 }
 
-/* Scrollbar custom */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { @apply bg-gray-300 rounded-full; }
-::-webkit-scrollbar-thumb:hover { @apply bg-gray-400; }
+/* ── Sidebar active indicator ── */
+.sidebar-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  background-color: #C46B1E;
+  border-radius: 0 3px 3px 0;
+}
 
-/* Animaciones */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+/* ── Scrollbar ── */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: #DDD6D1; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #BFB3AC; }
+
+/* ── Animaciones ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.animate-fade-in { animation: fadeIn 0.25s ease-out; }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 
-.skeleton {
-  @apply bg-gray-200 rounded animate-pulse;
+.animate-fade-in  { animation: fadeUp 0.25s ease-out; }
+.animate-fade     { animation: fadeIn 0.2s ease-out; }
+
+/* ── Skeleton ── */
+.skeleton { @apply rounded animate-pulse; background-color: #F0EBE6; }
+
+/* ── No scrollbar ── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Book card hover ── */
+.book-card-cover {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
+  box-shadow: 4px 6px 20px rgba(26,20,16,.18), 1px 2px 6px rgba(26,20,16,.10);
+}
+.book-card-cover:hover {
+  transform: translateY(-4px) rotate(-0.5deg);
+  box-shadow: 6px 10px 30px rgba(26,20,16,.22), 2px 4px 8px rgba(26,20,16,.12);
 }

@@ -9,82 +9,115 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, SpinnerComponent],
   template: `
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-      <div class="w-full max-w-md animate-fade-in">
+    <div class="min-h-screen flex items-center justify-center p-6" style="background-color: #FAF6F0;">
+      <div class="w-full max-w-sm animate-fade-in">
 
         <!-- Logo -->
-        <div class="text-center mb-8">
-          <div class="inline-flex w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-blue-600 items-center justify-center mb-4">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+        <div class="flex items-center gap-2.5 mb-10">
+          <div class="w-8 h-8 rounded-md flex items-center justify-center" style="background-color: #1A1410;">
+            <svg class="w-4 h-4" style="color: #C46B1E;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
           </div>
-          <h1 class="text-3xl font-bold text-gray-900">Recuperar contraseña</h1>
-          <p class="text-gray-500 mt-1">Te enviaremos un enlace de recuperación</p>
+          <span class="font-bold text-lg tracking-tight"
+                style="color: #1A1410; font-family: 'Playfair Display', Georgia, serif;">Inkly</span>
         </div>
 
-        <div class="card p-5 sm:p-8">
+        <div class="bg-white rounded-md p-8" style="border: 1px solid #DDD6D1;">
 
-          <!-- Estado: éxito -->
           @if (sent()) {
-            <div class="text-center space-y-4">
-              <div class="inline-flex w-14 h-14 rounded-full bg-green-100 items-center justify-center">
-                <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            <!-- Estado: enviado -->
+            <div class="text-center space-y-5">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center mx-auto"
+                   style="background-color: rgba(196,107,30,0.12);">
+                <svg class="w-6 h-6" style="color: #C46B1E;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
-              <p class="text-gray-700 font-medium">Revisa tu correo electrónico</p>
-              <p class="text-gray-500 text-sm">
-                Si el email está registrado, recibirás un enlace para restablecer tu contraseña en los próximos minutos.
-              </p>
+              <div>
+                <h1 class="text-xl font-bold"
+                    style="color: #1A1410; font-family: 'Playfair Display', Georgia, serif;">
+                  Revisa tu correo
+                </h1>
+                <p class="text-sm mt-2 leading-relaxed" style="color: #5C4E44;">
+                  Si el email está registrado, recibirás un enlace para restablecer tu contraseña en los próximos minutos.
+                </p>
+              </div>
 
               @if (devResetUrl()) {
-                <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-left">
-                  <p class="text-xs font-semibold text-amber-700 mb-1">Modo desarrollo — enlace directo:</p>
-                  <a [href]="devResetUrl()!" class="text-xs text-purple-600 hover:underline break-all">
+                <div class="p-3 rounded-md text-left"
+                     style="background-color: #FAE8D5; border: 1px solid #C46B1E;">
+                  <p class="text-xs font-semibold mb-1" style="color: #C46B1E;">
+                    Modo desarrollo — enlace directo:
+                  </p>
+                  <a [href]="devResetUrl()!" class="text-xs break-all hover:underline" style="color: #C46B1E;">
                     {{ devResetUrl() }}
                   </a>
                 </div>
               }
 
-              <a routerLink="/login"
-                class="inline-block mt-2 text-sm text-purple-600 font-medium hover:underline">
+              <a routerLink="/login" class="inline-block text-sm font-semibold hover:underline"
+                 style="color: #C46B1E;">
                 Volver al inicio de sesión
               </a>
             </div>
-          }
+          } @else {
+            <!-- Estado: formulario -->
+            <div class="mb-7">
+              <h1 class="text-2xl font-bold tracking-tight"
+                  style="color: #1A1410; font-family: 'Playfair Display', Georgia, serif;">
+                Recuperar contraseña
+              </h1>
+              <p class="text-sm mt-1.5 leading-relaxed" style="color: #5C4E44;">
+                Introduce tu email y te enviaremos un enlace para restablecer tu contraseña.
+              </p>
+            </div>
 
-          <!-- Estado: formulario -->
-          @if (!sent()) {
-            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4" novalidate>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
-                <input formControlName="email" type="email" class="input-field"
-                  placeholder="tu@email.com" autocomplete="email" />
+                <label for="recovery-email" class="block text-sm font-semibold mb-2" style="color: #1A1410;">
+                  Correo electrónico
+                </label>
+                <input id="recovery-email" formControlName="email" type="email"
+                  placeholder="tu@email.com" autocomplete="email"
+                  [attr.aria-invalid]="form.get('email')?.invalid && form.get('email')?.touched"
+                  class="input-field w-full"
+                  [style.border-color]="(form.get('email')?.invalid && form.get('email')?.touched) ? '#A8432B' : '#DDD6D1'" />
                 @if (form.get('email')?.invalid && form.get('email')?.touched) {
-                  <p class="text-red-500 text-xs mt-1">Introduce un email válido</p>
+                  <p class="text-xs mt-1.5 flex items-center gap-1" style="color: #A8432B;" role="alert">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    Introduce un email válido
+                  </p>
                 }
               </div>
 
+              <!-- Error global -->
               @if (error()) {
-                <div class="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl">
+                <div class="flex items-start gap-2.5 text-sm px-4 py-3 rounded-md"
+                     style="background-color: #F5E0DA; border: 1px solid #A8432B; color: #A8432B;"
+                     role="alert">
+                  <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
                   {{ error() }}
                 </div>
               }
 
-              <button type="submit" class="btn-primary w-full" [disabled]="loading() || form.invalid">
+              <button type="submit" class="btn-primary w-full py-3 mt-2" [disabled]="loading() || form.invalid">
                 @if (loading()) { <app-spinner size="sm" /> } @else { Enviar enlace de recuperación }
               </button>
-
-              <p class="text-center text-sm text-gray-500">
-                <a routerLink="/login" class="text-purple-600 font-medium hover:underline">
-                  Volver al inicio de sesión
-                </a>
-              </p>
             </form>
-          }
 
+            <p class="text-center text-sm mt-7">
+              <a routerLink="/login" class="font-semibold hover:underline" style="color: #C46B1E;">
+                Volver al inicio de sesión
+              </a>
+            </p>
+          }
         </div>
       </div>
     </div>
